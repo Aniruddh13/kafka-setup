@@ -1,0 +1,22 @@
+1. Complete docker setup.
+2. -- cd kafka-setup/setup
+3. --docker compose up -d
+4. kafka-topics --bootstrap-server 127.0.0.1:9092 --describe --topic my-topic
+   docker exec -u root -it broker-1 /bin/bash
+   kafka-console-producer --bootstrap-server 127.0.0.1:9092 --topic my-topic --property "parse.key=true" --property "key.separator=:"
+   kafka-reassign-partitions --zookeeper zookeeper-1:2181 --generate --topics-to-move-json-file topics.json
+   kafka-reassign-partitions --bootstrap-server 127.0.0.1:9092 --generate --topics-to-move-json-file topics.json --broker-list 3,2,1
+   kafka-console-producer --broker-list 127.0.0.1:9092 --topic new-input-topic --property parse.key=true --property key.separator=:
+   kafka-console-consumer --bootstrap-server 127.0.0.1:9092 --topic output-topic --property print.key=true --from-beginning
+
+
+   keytool -keystore keystore/broker.keystore.jks -alias broker -validity 365 -genkey -keyalg RSA -dname "CN=broker,OU=Community,O=BankOfAmerica,L=Utah,ST=Utah,C=US"
+   keytool -keystore truststore/broker.truststore.jks -import -alias ca-root -file ca-cert
+   keytool -keystore keystore/broker.keystore.jks -alias broker -validity 365 -genkey -keyalg RSA
+   keytool -keystore keystore/broker.keystore.jks -alias broker -certreq -file broker.csr
+   openssl x509 -req -CA ca-cert -CAkey ca-key -in broker.csr -out broker.signed -days 365 -CAcreateserial
+
+
+
+   keytool -keystore keystore/broker.keystore.jks -alias ca-root -importcert -file ca-cert
+   keytool -keystore keystore/broker.keystore.jks -alias broker -import -file broker.signed

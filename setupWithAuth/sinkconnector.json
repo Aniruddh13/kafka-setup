@@ -1,0 +1,15 @@
+{
+    "name": "elasticsearch-connector",
+    "config": {
+    "connector.class": "io.confluent.connect.elasticsearch.ElasticsearchSinkConnector",
+    "plugin.name": "pgoutput",
+    "tasks.max": "1",
+    
+    "topics": "postgres.public.products",
+    "key.ignore": "true",
+    "schema.ignore": "true",
+    "connection.url": "http://elasticsearch:9200",
+    "type.name": "kafka-connect",
+    "name": "elasticsearch-connector"
+    }
+    }
